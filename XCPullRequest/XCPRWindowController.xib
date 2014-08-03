@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5053" systemVersion="12F45" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+    <dependencies>
+        <deployment defaultVersion="1080" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5053"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="XCPRWindowController">
+            <connections>
+                <outlet property="mergeItem" destination="tHC-mH-X67" id="6aF-Ri-HQz"/>
+                <outlet property="patchScrollView" destination="5zC-M5-XYE" id="l4B-aM-h1a"/>
+                <outlet property="patchTextView" destination="B0S-N9-R0V" id="BcS-3a-fyW"/>
+                <outlet property="window" destination="6IH-Ht-27a" id="EeK-en-cXb"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application"/>
+        <userDefaultsController representsSharedInstance="YES" id="FDl-9p-JsC"/>
+        <window title="XCPullRequestManager" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="6IH-Ht-27a" customClass="XCPRWindow">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="335" y="390" width="538" height="634"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
+            <view key="contentView" id="0YU-ES-aMo">
+                <rect key="frame" x="0.0" y="0.0" width="538" height="634"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <scrollView horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="5zC-M5-XYE">
+                        <rect key="frame" x="-1" y="-1" width="540" height="636"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <clipView key="contentView" id="Oku-Fw-aU5">
+                            <rect key="frame" x="1" y="1" width="538" height="634"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <subviews>
+                                <textView editable="NO" importsGraphics="NO" findStyle="panel" allowsUndo="YES" usesRuler="YES" usesFontPanel="YES" verticallyResizable="YES" allowsNonContiguousLayout="YES" id="B0S-N9-R0V">
+                                    <rect key="frame" x="0.0" y="0.0" width="538" height="634"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <size key="minSize" width="538" height="634"/>
+                                    <size key="maxSize" width="540" height="10000000"/>
+                                    <color key="insertionPointColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                    <size key="minSize" width="538" height="634"/>
+                                    <size key="maxSize" width="540" height="10000000"/>
+                                </textView>
+                            </subviews>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </clipView>
+                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="TjA-Qn-eaQ">
+                            <rect key="frame" x="-100" y="-100" width="87" height="18"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                        <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="Lbi-d6-cl8">
+                            <rect key="frame" x="523" y="1" width="16" height="634"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                    </scrollView>
+                </subviews>
+            </view>
+            <toolbar key="toolbar" implicitIdentifier="A4242483-C14B-4DCB-A677-81CD66D3E169" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconAndLabel" sizeMode="regular" id="IgE-Ld-UPy">
+                <allowedToolbarItems>
+                    <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="tYF-HL-05s"/>
+                    <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="0Bs-aH-qd9"/>
+                    <toolbarItem implicitItemIdentifier="7504C7FF-E55B-4FE7-B3EF-AC7AAE4BB30B" label="Merge Patch" paletteLabel="Merge" tag="-1" image="Merge_32x32" autovalidates="NO" id="tHC-mH-X67">
+                        <connections>
+                            <action selector="mergeToMaster:" target="-2" id="zcY-56-97Y"/>
+                        </connections>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="FB427272-B8B8-4B66-AA9C-61F758F11D6F" label="Reject Request" paletteLabel="Reject Request Item" tag="-1" image="delete_32x32" id="6oG-bW-u6p">
+                        <connections>
+                            <action selector="rejectPullRequest:" target="-2" id="dQ0-JK-Q7a"/>
+                        </connections>
+                    </toolbarItem>
+                </allowedToolbarItems>
+                <defaultToolbarItems>
+                    <toolbarItem reference="tHC-mH-X67"/>
+                    <toolbarItem reference="0Bs-aH-qd9"/>
+                    <toolbarItem reference="6oG-bW-u6p"/>
+                </defaultToolbarItems>
+            </toolbar>
+            <connections>
+                <outlet property="delegate" destination="-2" id="FxW-qF-9Ob"/>
+            </connections>
+        </window>
+    </objects>
+    <resources>
+        <image name="Merge_32x32" width="32" height="32"/>
+        <image name="delete_32x32" width="32" height="32"/>
+    </resources>
+</document>
