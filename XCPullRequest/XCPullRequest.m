@@ -207,26 +207,26 @@ static XCPullRequest *sharedPlugin;
     Class xcAppClass = objc_getClass("IDEApplicationController");
     NSError *theError = nil;
     
-    Method ourFileOpenReplacement = class_getInstanceMethod([self class], @selector(ourApplication:openFile:));
-    class_addMethod(xcAppClass, @selector(ourApplication:openFile:), method_getImplementation(ourFileOpenReplacement), method_getTypeEncoding(ourFileOpenReplacement));
-    
-    BOOL swizzleScience = FALSE;
-    
-    swizzleScience = [xcAppClass jr_swizzleMethod:@selector(application:openFile:) withMethod:@selector(ourApplication:openFile:) error:&theError];
-    
-    if (swizzleScience == TRUE)
-    {
-        NSLog(@"IDEApplicationController ourApplication:openFile: replaced!");
-    } else {
-        
-        NSLog(@"IDEApplicationController ourApplication:openFile: failed to replace with error: %@", theError);
-        
-    }
+//    Method ourFileOpenReplacement = class_getInstanceMethod([self class], @selector(ourApplication:openFile:));
+//    class_addMethod(xcAppClass, @selector(ourApplication:openFile:), method_getImplementation(ourFileOpenReplacement), method_getTypeEncoding(ourFileOpenReplacement));
+//    
+//    BOOL swizzleScience = FALSE;
+//    
+//    swizzleScience = [xcAppClass jr_swizzleMethod:@selector(application:openFile:) withMethod:@selector(ourApplication:openFile:) error:&theError];
+//    
+//    if (swizzleScience == TRUE)
+//    {
+//        NSLog(@"IDEApplicationController ourApplication:openFile: replaced!");
+//    } else {
+//        
+//        NSLog(@"IDEApplicationController ourApplication:openFile: failed to replace with error: %@", theError);
+//        
+//    }
     
     Method ourFilesOpenReplacement = class_getInstanceMethod([self class], @selector(ourApplication:openFiles:));
     class_addMethod(xcAppClass, @selector(ourApplication:openFiles:), method_getImplementation(ourFilesOpenReplacement), method_getTypeEncoding(ourFilesOpenReplacement));
     
-    swizzleScience = [xcAppClass jr_swizzleMethod:@selector(application:openFiles:) withMethod:@selector(ourApplication:openFiles:) error:&theError];
+    BOOL swizzleScience = [xcAppClass jr_swizzleMethod:@selector(application:openFiles:) withMethod:@selector(ourApplication:openFiles:) error:&theError];
     
     if (swizzleScience == TRUE)
     {
@@ -582,7 +582,7 @@ static XCPullRequest *sharedPlugin;
 
 - (BOOL)ourApplication:(NSApplication *)sender openFiles:(NSArray *)filenames
 {
-    BOOL orig = TRUE;
+    BOOL orig = FALSE; 
     NSString *filename = [filenames lastObject];
     if ([[[filename pathExtension] lowercaseString] isEqualToString:@"gpatch"])
     {
@@ -591,7 +591,7 @@ static XCPullRequest *sharedPlugin;
         
     } else {
         
-        orig = [self ourApplication:sender openFile:filename];
+        orig = [self ourApplication:sender openFiles:filenames];
         
     }
     
@@ -600,7 +600,7 @@ static XCPullRequest *sharedPlugin;
 
 - (BOOL)ourApplication:(NSApplication *)sender openFile:(NSString *)filename
 {
-    BOOL orig = TRUE;
+    BOOL orig = [self ourApplication:sender openFile:filename];
     if ([[[filename pathExtension] lowercaseString] isEqualToString:@"gpatch"])
     {
         orig = FALSE;

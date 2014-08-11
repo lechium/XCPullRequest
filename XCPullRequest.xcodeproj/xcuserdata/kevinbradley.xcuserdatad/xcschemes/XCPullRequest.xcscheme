@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "32F61DCD195B26C200B5EC2C"
-               BuildableName = "GMPullRequest.xcplugin"
-               BlueprintName = "GMPullRequest"
-               ReferencedContainer = "container:GMPullRequest.xcodeproj">
+               BuildableName = "XCPullRequest.xcplugin"
+               BlueprintName = "XCPullRequest"
+               ReferencedContainer = "container:XCPullRequest.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
