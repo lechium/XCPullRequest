@@ -770,7 +770,7 @@ static XCPullRequest *sharedPlugin;
         return [[[[XCPRModel sourceControlMonitor] sourceControlProject] dictionaryRepresentation] valueForKey:@"IDESourceControlProjectName"];
     }
     
-    if ([sourceControlMonitor respondsToSelector:@selector(cachedBlueprint)])
+    if ([sourceControlMonitor respondsToSelector:@selector(cachedBlueprint)]) //xcode 6
     {
         //DVTSourceControlWorkspaceBlueprint *blueprint = [sourceControlMonitor cachedBlueprint];
         return [[sourceControlMonitor workspace] name];
@@ -784,12 +784,12 @@ static XCPullRequest *sharedPlugin;
 - (NSString *)sourceProjectRemoteURL
 {
     IDESourceControlWorkspaceMonitor *sourceControlMonitor = [XCPRModel sourceControlMonitor];
-    if ([sourceControlMonitor respondsToSelector:@selector(sourceControlProject)])
+    if ([sourceControlMonitor respondsToSelector:@selector(sourceControlProject)]) //xcode 5
     {
         return [[[[XCPRModel sourceControlMonitor] sourceControlProject] dictionaryRepresentation] valueForKey:@"IDESourceControlProjectURL"];
     }
     
-    if ([sourceControlMonitor respondsToSelector:@selector(cachedBlueprint)])
+    if ([sourceControlMonitor respondsToSelector:@selector(cachedBlueprint)]) //xcode 6
     {
         DVTSourceControlWorkspaceBlueprint *blueprint = [sourceControlMonitor cachedBlueprint];
         DVTSourceControlRemoteRepository *remoteRepo = [blueprint primaryRemoteRepository];

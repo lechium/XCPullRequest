@@ -1,7 +1,9 @@
 XCPullRequest
 =============
 
-XCode plugin to implement native pull requests
+Xcode plugin to implement native pull requests. This is geared specifically for hosting your own repositories on a local network and not on github, it is only targeted towards pull requests / merges between branches and not forks. I don't know if this is even possible to implement natively for github.
+
+It was modeled specifically for GIT servers being hosted via Apples OS X server. 
 
 Pre-Requisites
 ==============
