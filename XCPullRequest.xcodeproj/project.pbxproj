@@ -23,6 +23,7 @@
 		32F61DDD195B26C200B5EC2C /* XCPullRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 32F61DDC195B26C200B5EC2C /* XCPullRequest.m */; };
 		896C087D19835F0E007B15BC /* JRSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = 896C087C19835F0E007B15BC /* JRSwizzle.m */; };
 		89B041AC198488A100B3B2B0 /* XCTerminalUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 89B041AB198488A100B3B2B0 /* XCTerminalUtils.m */; };
+		89D3A1871A3BE79600267C05 /* XCPRWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 89FB8EC119847DE3007207CF /* XCPRWindowController.xib */; };
 		89FB8EC219847DE3007207CF /* XCPRWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 89FB8EC019847DE3007207CF /* XCPRWindowController.m */; };
 		89FB8ECA19847F67007207CF /* NoodleLineNumberMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = 89FB8EC519847F67007207CF /* NoodleLineNumberMarker.m */; };
 		89FB8ECB19847F67007207CF /* NoodleLineNumberView.m in Sources */ = {isa = PBXBuildFile; fileRef = 89FB8EC719847F67007207CF /* NoodleLineNumberView.m */; };
@@ -318,6 +319,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				89D3A1871A3BE79600267C05 /* XCPRWindowController.xib in Resources */,
 				89FBA941198D73270068F916 /* delete_32x32.tiff in Resources */,
 				89FBA947198D750A0068F916 /* InfoPlist.strings in Resources */,
 				89FBA942198D73270068F916 /* Merge_32x32.tiff in Resources */,

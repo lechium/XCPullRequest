@@ -120,7 +120,9 @@ static XCPullRequest *sharedPlugin;
     //IDESourceControlIDEDidUpdateLocalStatusNotification
     static dispatch_once_t onceToken;
     NSString *currentApplicationName = [[NSBundle mainBundle] infoDictionary][@"CFBundleName"];
-    if ([currentApplicationName isEqual:@"Xcode"]) {
+    if ([currentApplicationName rangeOfString:@"Xcode"].location != NSNotFound) {
+        NSLog(@"loading XCPull request in: %@", currentApplicationName);
+    //if ([currentApplicationName isEqual:@"Xcode"]) {
         dispatch_once(&onceToken, ^{
             sharedPlugin = [[self alloc] initWithBundle:plugin];
         });
@@ -370,37 +372,91 @@ static XCPullRequest *sharedPlugin;
         if ([name isEqualToString:@"IDESourceControlIDEDidUpdateLocalStatusNotification"] || [name isEqualToString:@"IDESourceControlIDEWillUpdateLocalStatusNotification"])
         {
             IDESourceControlWorkspaceMonitor *monitor = [XCPRModel sourceControlMonitor];
-            IDESourceControlProject *project = [monitor sourceControlProject];
-            //NSLog(@"project: %@", project);
-            if (project == nil)
+            NSLog(@"#### monitor: %@", monitor);
+            if ([monitor respondsToSelector:@selector(sourceControlProject)]) //xcode 5
             {
-                [[[menuItem submenu] itemAtIndex:6] setTarget:nil];
-                
-            } else if (project != nil) {
-                
-                //     NSLog(@"gitBranch: -%@-", [self currentGITBranch]);
-                if ([[XCTerminalUtils currentGITBranch] isEqualToString:@"master"])
+                IDESourceControlProject *project = [monitor sourceControlProject];
+                //NSLog(@"project: %@", project);
+                if (project == nil)
                 {
                     [[[menuItem submenu] itemAtIndex:6] setTarget:nil];
-                } else {
-                    [[[menuItem submenu] itemAtIndex:6] setTarget:self];
+                    
+                } else if (project != nil) {
+                    
+                    //     NSLog(@"gitBranch: -%@-", [self currentGITBranch]);
+                    if ([[XCTerminalUtils currentGITBranch] isEqualToString:@"master"])
+                    {
+                        [[[menuItem submenu] itemAtIndex:6] setTarget:nil];
+                    } else {
+                        [[[menuItem submenu] itemAtIndex:6] setTarget:self];
+                    }
+                    
                 }
-                
             }
+            
+            if ([monitor respondsToSelector:@selector(cachedBlueprint)]) //xcode 6
+            {
+                DVTSourceControlWorkspaceBlueprint *blueprint = [monitor cachedBlueprint];
+                DVTSourceControlRemoteRepository *remoteRepo = [blueprint primaryRemoteRepository];
+                if (remoteRepo == nil)
+                {
+                    [[[menuItem submenu] itemAtIndex:6] setTarget:nil];
+                    
+                } else if (remoteRepo != nil) {
+                    
+                    //     NSLog(@"gitBranch: -%@-", [self currentGITBranch]);
+                    if ([[XCTerminalUtils currentGITBranch] isEqualToString:@"master"])
+                    {
+                        [[[menuItem submenu] itemAtIndex:6] setTarget:nil];
+                    } else {
+                        [[[menuItem submenu] itemAtIndex:6] setTarget:self];
+                    }
+                    
+                }
+            }
+            
+            
+          
         }
         id object = [notification object];
         
         // NSLog(@"notification: %@ object: %@", name, [notification object]);
         if ([object isKindOfClass:iscwm])
         {
-            id sco = [object valueForKey:@"sourceControlProject"];
-            
-            if (sco == nil)
+            if ([object respondsToSelector:@selector(sourceControlProject)]) //xcode 5
             {
-                [[[menuItem submenu] itemAtIndex:6] setTarget:nil];
-            } else if (sco != nil) {
-                [[[menuItem submenu] itemAtIndex:6] setTarget:self];
+                id sco = [object valueForKey:@"sourceControlProject"];
+                if (sco == nil)
+                {
+                    [[[menuItem submenu] itemAtIndex:6] setTarget:nil];
+                } else if (sco != nil) {
+                    [[[menuItem submenu] itemAtIndex:6] setTarget:self];
+                    
+                }
                 
+            }
+            
+            
+            
+            if ([object respondsToSelector:@selector(cachedBlueprint)]) //xcode 6
+            {
+                DVTSourceControlWorkspaceBlueprint *blueprint = [object cachedBlueprint];
+                DVTSourceControlRemoteRepository *remoteRepo = [blueprint primaryRemoteRepository];
+                if (remoteRepo == nil)
+                {
+                    [[[menuItem submenu] itemAtIndex:6] setTarget:nil];
+                    
+                } else if (remoteRepo != nil) {
+                    
+                    //     NSLog(@"gitBranch: -%@-", [self currentGITBranch]);
+                    if ([[XCTerminalUtils currentGITBranch] isEqualToString:@"master"])
+                    {
+                        [[[menuItem submenu] itemAtIndex:6] setTarget:nil];
+                    } else {
+                        [[[menuItem submenu] itemAtIndex:6] setTarget:self];
+                    }
+                    
+                }
             }
         }
     }
@@ -450,8 +506,9 @@ static XCPullRequest *sharedPlugin;
 {
     NSString *stringFromDict = [infoDict stringFromDictionary];
     
-    NSDictionary *sourceControlDict = [[[XCPRModel sourceControlMonitor] sourceControlProject] dictionaryRepresentation];
-    NSString *projectURL = sourceControlDict[@"IDESourceControlProjectURL"];
+    //NSDictionary *sourceControlDict = [[[XCPRModel sourceControlMonitor] sourceControlProject] dictionaryRepresentation];
+    //NSString *projectURL = sourceControlDict[@"IDESourceControlProjectURL"];
+    NSString *projectURL = [self sourceProjectRemoteURL];
     NSString *projectBranch = [XCTerminalUtils currentGITBranch];
     NSArray *gitArguments = [NSArray arrayWithObjects:@"request-pull", @"-p", @"origin/master", projectURL, projectBranch, nil];
     [[NSFileManager defaultManager] createFileAtPath:outputPath contents:[self fromData] attributes:nil];
@@ -491,8 +548,9 @@ static XCPullRequest *sharedPlugin;
 - (NSString *)pullRequestPatchPath
 {
     NSString *rootPath = @"/private/tmp";
-    NSDictionary *sourceControlDict = [[[XCPRModel sourceControlMonitor] sourceControlProject] dictionaryRepresentation];
-    NSString *projectURL = sourceControlDict[@"IDESourceControlProjectURL"];
+    //NSDictionary *sourceControlDict = [[[XCPRModel sourceControlMonitor] sourceControlProject] dictionaryRepresentation];
+    //NSString *projectURL = sourceControlDict[@"IDESourceControlProjectURL"];
+    NSString *projectURL = [self sourceProjectRemoteURL];
     NSString *projectBranch = [XCTerminalUtils currentGITBranch];
     NSArray *gitArguments = [NSArray arrayWithObjects:@"request-pull", @"-p", @"origin/master", projectURL, projectBranch, nil];
     NSString *gitTest = [NSString stringWithFormat:@"git %@", [gitArguments componentsJoinedByString:@" "]];
@@ -650,8 +708,9 @@ static XCPullRequest *sharedPlugin;
 {
     NSFileManager *man = [NSFileManager defaultManager];
     NSString *rootPath = @"/private/tmp";
-    NSDictionary *sourceControlDict = [[[XCPRModel sourceControlMonitor] sourceControlProject] dictionaryRepresentation];
-    NSString *projectName = sourceControlDict[@"IDESourceControlProjectName"];
+   // NSDictionary *sourceControlDict = [[[XCPRModel sourceControlMonitor] sourceControlProject] dictionaryRepresentation];
+    //NSString *projectName = sourceControlDict[@"IDESourceControlProjectName"];
+    NSString *projectName = [self sourceProjectName];
     NSString *projectBranch = [XCTerminalUtils currentGITBranch];
     NSString *bundlePath = [rootPath stringByAppendingPathComponent:[self pullRequestBundleName]];
     NSString *infoLocation = [bundlePath stringByAppendingFormat:@"/Contents/Info.plist"];
@@ -703,12 +762,51 @@ static XCPullRequest *sharedPlugin;
     }
 }
 
+- (NSString *)sourceProjectName
+{
+    IDESourceControlWorkspaceMonitor *sourceControlMonitor = [XCPRModel sourceControlMonitor];
+    if ([sourceControlMonitor respondsToSelector:@selector(sourceControlProject)]) //xcode 5
+    {
+        return [[[[XCPRModel sourceControlMonitor] sourceControlProject] dictionaryRepresentation] valueForKey:@"IDESourceControlProjectName"];
+    }
+    
+    if ([sourceControlMonitor respondsToSelector:@selector(cachedBlueprint)])
+    {
+        //DVTSourceControlWorkspaceBlueprint *blueprint = [sourceControlMonitor cachedBlueprint];
+        return [[sourceControlMonitor workspace] name];
+        // DVTSourceControlRemoteRepository *remoteRepo = [blueprint primaryRemoteRepository];
+        //return [remoteRepo name];
+    }
+    
+    return nil;
+}
+
+- (NSString *)sourceProjectRemoteURL
+{
+    IDESourceControlWorkspaceMonitor *sourceControlMonitor = [XCPRModel sourceControlMonitor];
+    if ([sourceControlMonitor respondsToSelector:@selector(sourceControlProject)])
+    {
+        return [[[[XCPRModel sourceControlMonitor] sourceControlProject] dictionaryRepresentation] valueForKey:@"IDESourceControlProjectURL"];
+    }
+    
+    if ([sourceControlMonitor respondsToSelector:@selector(cachedBlueprint)])
+    {
+        DVTSourceControlWorkspaceBlueprint *blueprint = [sourceControlMonitor cachedBlueprint];
+        DVTSourceControlRemoteRepository *remoteRepo = [blueprint primaryRemoteRepository];
+        return [[remoteRepo URL] absoluteString];
+    }
+
+    return nil;
+}
+
+
 - (NSString *) pullRequestBundleName
 {
     //NSDateFormatter *df = [[NSDateFormatter alloc] init];
     // [df setDateFormat:OUR_DATE_FORMAT];
-    NSDictionary *sourceControlDict = [[[XCPRModel sourceControlMonitor] sourceControlProject] dictionaryRepresentation];
-    NSString *projectName = sourceControlDict[@"IDESourceControlProjectName"];
+   // NSDictionary *sourceControlDict = [[[XCPRModel sourceControlMonitor] sourceControlProject] dictionaryRepresentation];
+    //NSString *projectName = sourceControlDict[@"IDESourceControlProjectName"];
+    NSString *projectName = [self sourceProjectName];
     NSString *projectBranch = [XCTerminalUtils currentGITBranch];
     NSString *nameString = [NSString stringWithFormat:@"%@_%@_%@.bundle", projectName, projectBranch, pullReqId];
     return nameString;
@@ -718,8 +816,9 @@ static XCPullRequest *sharedPlugin;
 {
     //  NSDateFormatter *df = [[NSDateFormatter alloc] init];
     //[df setDateFormat:OUR_DATE_FORMAT];
-    NSDictionary *sourceControlDict = [[[XCPRModel sourceControlMonitor] sourceControlProject] dictionaryRepresentation];
-    NSString *projectName = sourceControlDict[@"IDESourceControlProjectName"];
+   // NSDictionary *sourceControlDict = [[[XCPRModel sourceControlMonitor] sourceControlProject] dictionaryRepresentation];
+    //NSString *projectName = sourceControlDict[@"IDESourceControlProjectName"];
+    NSString *projectName = [self sourceProjectName];
     NSString *projectBranch = [XCTerminalUtils currentGITBranch];
     NSString *nameString = [NSString stringWithFormat:@"%@_%@_%@.gpatch", projectName, projectBranch, pullReqId];
     return nameString;
